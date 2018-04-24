@@ -41,7 +41,7 @@ def fakeGetWeek(): #for debugging
 class myCal:
 
     def __init__(self):
-        fp = webdriver.FirefoxProfile('C:/Users/Fuck You Cortana/AppData/Roaming/Mozilla/Firefox/Profiles/1u4brv9j.autoTest')
+        fp = webdriver.FirefoxProfile('1u4brv9j.autoTest')
         self.driver = webdriver.Firefox(fp)
         self.driver.get("https://calendar.google.com/calendar/r")
         time.sleep(2)
