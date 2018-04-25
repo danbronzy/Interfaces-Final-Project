@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 import time
 
 def getWeek(driver):
@@ -41,8 +42,10 @@ def fakeGetWeek(): #for debugging
 class myCal:
 
     def __init__(self):
+        options = Options()
+        options.add_argument("--headless")
         fp = webdriver.FirefoxProfile('firefoxProfile')
-        self.driver = webdriver.Firefox(fp)
+        self.driver = webdriver.Firefox(firefox_profile = fp, options = options)
         self.driver.get("https://calendar.google.com/calendar/r")
         time.sleep(2)
         self.schedule = self.getSchedule()
