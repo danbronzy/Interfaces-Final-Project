@@ -9,6 +9,7 @@ import re
 
 
 class gui:
+
     def __init__(self, calendar):
         self.calendar = calendar
 
@@ -18,6 +19,7 @@ class gui:
         self.root1.attributes("-fullscreen", True)
         self.root1['bg']="black"
         self.root1.attributes("-topmost", True)
+        self.root1.bind("<Escape>", self.close)
 
         # Style options
         s=Style()
@@ -40,6 +42,9 @@ class gui:
         self.makeCalendar()
         self.makeLoading()
         self.makeClock()
+
+    def close(self, event):
+        self.root1.destroy()
 
     def makeWeather(self):
 
@@ -148,5 +153,6 @@ class gui:
 
     def launch(self):
         #show
+        self.root1.focus_force()
         self.root1.after(1000,self.updateClock)
         self.root1.mainloop()
