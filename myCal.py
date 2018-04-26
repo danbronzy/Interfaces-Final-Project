@@ -43,7 +43,7 @@ class myCal:
 
     def __init__(self):
         options = Options()
-        options.add_argument("--headless")
+        options.add_argument("-headless")
         fp = webdriver.FirefoxProfile('firefoxProfile')
         self.driver = webdriver.Firefox(firefox_profile = fp, options = options)
         self.driver.get("https://calendar.google.com/calendar/r")
