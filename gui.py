@@ -36,18 +36,26 @@ class gui:
         self.newsFrame.place(rely=1.0, relx=0, x=0, y=0, anchor=SW)
         self.weatherFrame= Frame(self.root1, style = 'imgCont.TFrame')
         self.weatherFrame.place(rely=0, relx=1.0, x=0, y=0, anchor=NE)
+        
+        self.makeClock()
+        self.updateAll()
+        self.makeLoading()
+        
 
+    def updateAll(self):
         self.makeWeather()
         self.makeNews()
         self.makeCalendar()
-        self.makeLoading()
-        self.makeClock()
-
+        self.lastUpdated = datetime.datetime.now()
+        self.updated.configure(text = 'Last updated: ' + datetime.datetime.now().strftime("%I:%M:%S"))
+        
     def close(self, event):
         self.root1.destroy()
 
     def makeWeather(self):
-
+        #clear frame
+        self.destroyChildrenOf(self.weatherFrame)
+        
         #weather frame
         weatherData = we.getWeather()
 
@@ -86,7 +94,8 @@ class gui:
 
     def makeNews(self):
         #News frame
-
+        #clear frame
+        self.destroyChildrenOf(self.newsFrame)
 
         newsTitle = Label(self.newsFrame, text = 'News | Politics', style = 'medium.TLabel')
         newsTitle.grid(row = 0, column = 0, sticky = 'NSEW')
@@ -102,8 +111,9 @@ class gui:
             artDesc.grid(padx = 33, sticky = 'EW')
 
     def makeCalendar(self):
-
-        schedule = self.calendar.schedule
+        #clear frame
+        self.destroyChildrenOf(self.calFrame)
+        schedule = self.calendar.reload()
 
         futureSchedule = []
         for day in schedule:
@@ -133,6 +143,8 @@ class gui:
     def makeClock(self):
 
         self.clockFrame = Frame(self.root1, style = 'imgCont.TFrame')
+        self.updated = Label(self.clockFrame, style = 'smallDescription.TLabel', text = 'Last Updated: ')
+        self.updated.grid()
         self.clock = Label(self.clockFrame, style = 'large.TLabel', text = datetime.datetime.now().strftime("%I:%M:%S"))
         self.clockFrame.place(rely=0,relx=0.5,anchor = N)
         self.clock.grid()
@@ -147,6 +159,9 @@ class gui:
             child.destroy()
 
     def updateClock(self):
+        if (datetime.datetime.now() - self.lastUpdated).total_seconds() > 3600:
+            self.updateAll()
+            self.updated.configure(text = 'Last updated: ' + datetime.datetime.now().strftime("%I:%M:%S"))
         self.clock.configure(text = datetime.datetime.now().strftime("%I:%M:%S"))
         self.date.configure(text = datetime.datetime.now().strftime("%b %d"))
         self.root1.after(1000, self.updateClock)
