@@ -2,14 +2,16 @@ import time
 import threading
 import pyaudio
 import speech_recognition as sr
-import re
-import datetime
-from datetime import timedelta
+import sys
+sys.path.append('/home/pi/snowboycopy/snowboy/examples/Python3/')
+import snowboydecoder
+import os
+import playSound
 
 class listener(threading.Thread):
 
     def __init__(self, gui):
-
+        
         self.gui = gui
         threading.Thread.__init__(self)
         self.daemon = True
@@ -18,60 +20,26 @@ class listener(threading.Thread):
         self.start()
 
     def run(self):
+        self.gui.configText(self.gui.loadingText, 'Say \'Smart Mirror\' to get started')
+        detector = snowboydecoder.HotwordDetector("smart_mirror.pmdl", sensitivity=0.5, audio_gain=1)
+        detector.start(detected_callback = self.detected_callback, audio_recorder_callback = self.audio_recorder_callback)
+        
+    def audio_recorder_callback(self, fname):
+        self.gui.configText(self.gui.loadingText, "Thinking...")
+        with sr.AudioFile(fname) as src:
+            audio = self.r.record(src)
+        
+        try:
+            self.gui.configText(self.gui.loadingText, self.r.recognize_google(audio))
+        except sr.UnknownValueError:
+            self.gui.configText(self.gui.loadingText, "You talk funny, try again idiot")
+        except sr.RequestError:
+            self.gui.configText(self.gui.loadingText, "Google sucks and messed up")
+        playSound.threadedSoundPlayer('down.wav')
+        os.remove(fname)
+        
+    def detected_callback(self):
+        playSound.threadedSoundPlayer('up.wav')
+        self.gui.configText(self.gui.loadingText, 'Listening...')        
 
-         while True:
-            with sr.Microphone(None, 16000) as source:
-                self.gui.configText(self.gui.loadingText, 'Listening...')
-                audio = self.r.listen(source, None, 5.0)
-
-            self.gui.configText(self.gui.loadingText, 'Thinking...')
-            try:
-                transcription = self.r.recognize_google(audio)
-                self.gui.configText(self.gui.loadingText, 'You said: ' + transcription)
-            except:
-                transcription = ''
-                self.gui.configText(self.gui.loadingText, 'There was an error transcribing')
-
-            if transcription[:9] == 'remind me':
-                #setting a reminder
-                time = re.findall(r'remind me (.*?) (?:to|that)',transcription)[0]
-
-                #get current info
-                now = datetime.datetime.now()
-                currMonth = now.month
-                currDay = now.day
-                currHour = now.hour
-                currMinute = now.minute
-
-                #evaluate relative dates
-                if (time.find('today') != -1) | (time.find('this') != -1):
-                    day = currDay
-                    month = currMonth
-                elif time.find('tomorrow') != -1:
-                    newTime =  now + timedelta(days = 1)
-                    day = newTime.day
-                    month = newTime.month
-                elif time.find('on ') != -1:
-                    a=1
-                else:
-                    day = currDay
-                    month = currMonth
-
-                #evaluate times
-                if (time.find('morning') != -1):
-                    hour = '09'
-                    minute = '00'
-                elif (time.find('afternoon') != -1):
-                    hour = '13'
-                    minute = '00'
-                elif (time.find('evening') != -1):
-                    hour = '18'
-                    minute = '00'
-                elif (time.find('night') != -1):
-                    hour = '21'
-                    minute = '00'
-
-
-                action = re.findall(r'(?:to |that )(.*)',list[i])[0]
-
-            time.sleep(5)
+        
