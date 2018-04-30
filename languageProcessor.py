@@ -3,7 +3,7 @@ import datetime
 from datetime import timedelta
 from time import strptime
 
-def transcribe(transcription):
+def evaluate(transcription):
 
     if transcription[:9] == 'remind me':
         #setting a reminder
@@ -70,3 +70,5 @@ def transcribe(transcription):
                 hour += 'am'
         parsedDate = 'Date: {1} {0} time: {2} action: {3}'.format(day, month, hour, action)
         return parsedDate
+    else:
+        return transcription

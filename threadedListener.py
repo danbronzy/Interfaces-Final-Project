@@ -7,6 +7,7 @@ sys.path.append('/home/pi/snowboycopy/snowboy/examples/Python3/')
 import snowboydecoder
 import os
 import playSound
+import languageProcessor
 
 class listener(threading.Thread):
 
@@ -30,11 +31,17 @@ class listener(threading.Thread):
             audio = self.r.record(src)
         
         try:
-            self.gui.configText(self.gui.loadingText, self.r.recognize_google(audio))
+            transcription = self.r.recognize_google(audio)
         except sr.UnknownValueError:
             self.gui.configText(self.gui.loadingText, "You talk funny, try again idiot")
         except sr.RequestError:
             self.gui.configText(self.gui.loadingText, "Google sucks and messed up")
+        command = languageProcessor.evaluate(transcription)
+        if ((command == 'update now') | (command == 'update')):
+            self.gui.configText(self.gui.loadingText, 'Updating All')  
+            self.gui.updateAll()
+        else:
+            self.gui.configText(self.gui.loadingText, 'You said ' + command)  
         playSound.threadedSoundPlayer('down.wav')
         os.remove(fname)
         
