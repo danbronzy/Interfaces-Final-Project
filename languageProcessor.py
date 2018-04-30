@@ -13,15 +13,14 @@ def transcribe(transcription):
         now = datetime.datetime.now()
         currMonth = str(now.month)
         currDay = str(now.day)
-        currHour = str(now.hour)
-        currMinute = str(now.minute)
+        currHour = ('00' + str(now.hour))[-2:]
+        currMinute = ('00' + str(now.minute))[-2:]
         month = currMonth
         day = currDay
         hour = currHour + currMinute
 
         if 'in ' in currTime: #travel in time x amounts of timeunit
             futureTime = now
-
             if 'minute' in currTime:
                 numMins = re.findall(r'(\d*) minute', currTime)
                 if numMins: futureTime = futureTime + timedelta(minutes = int(numMins[0]))
@@ -34,7 +33,7 @@ def transcribe(transcription):
 
             day = str(futureTime.day)
             month = str(futureTime.month)
-            hour = str(futureTime.hour) + str(futureTime.minute)
+            hour = ('00' + str(futureTime.hour))[-2:] + ('00' + str(futureTime.minute))[-2:]
         else:
             #evaluate relative dates (month and day)
             if (('today' in currTime) | ('this' in currTime) | ('tonight' in currTime)):
@@ -71,5 +70,3 @@ def transcribe(transcription):
                 hour += 'am'
         parsedDate = 'Date: {1} {0} time: {2} action: {3}'.format(day, month, hour, action)
         return parsedDate
-currTime = 'on april 18th'
-re.findall(r'on ([^at]*)', currTime)
