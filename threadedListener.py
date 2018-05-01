@@ -37,11 +37,19 @@ class listener(threading.Thread):
         except sr.RequestError:
             self.gui.configText(self.gui.loadingText, "Google sucks and messed up")
         command = languageProcessor.evaluate(transcription)
-        if ((command == 'update now') | (command == 'update')):
+        if (command['command'] == 'update'):
             self.gui.configText(self.gui.loadingText, 'Updating All')  
             self.gui.updateAll()
-        else:
-            self.gui.configText(self.gui.loadingText, 'You said ' + command)  
+        elif command['command'] == 'reminder':
+            parsedDate = 'Date: {0} {1} time: {2} action: {3}'.format(*command['data'])
+            self.gui.configText(self.gui.loadingText, 'Adding Reminder | ' + parsedDate)
+            self.gui.addReminder(command['data'])
+        elif command['command'] == 'exit':
+            self.gui.close()
+        elif command['command'] == 'unknown':
+            self.gui.configText(self.gui.loadingText, 'Command Unknown. You said ' + command['data'])  
+        
+        
         playSound.threadedSoundPlayer('down.wav')
         os.remove(fname)
         

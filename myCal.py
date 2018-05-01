@@ -3,16 +3,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 import time
 
-def getWeek(driver):
-    events = [driver.find_elements_by_xpath("//div[@jsname='RjPD4e']//h2[@id ='tsc-%s']//..//div[@jscontroller = 'Bo3nHd']" % i) for i in range(7)]
-    dayTitles = [driver.find_elements_by_xpath("//h2[@id ='tsc-%s']" % i)[0].text for i in range(7)]
-    currWeek = []
-    for dayOfEvents, dayTitle in zip(events, dayTitles):
-        eventList = [{'time': x.text.split(',')[0], 'name': x.text.split(',')[1]} for x in dayOfEvents]
-        currWeek.append({'title':dayTitle,'events':eventList})
-
-    return currWeek
-
 def fakeGetWeek(): #for debugging
     schedule = [{'events': [], 'title': 'No events, Sunday, April 22'},
                 {'events': [{'name': ' Reminder: Get my laundry', 'time': '12:01pm'},
@@ -48,16 +38,17 @@ class myCal:
         self.driver = webdriver.Firefox(firefox_profile = fp, options = options)
         self.driver.get("https://calendar.google.com/calendar/r")
         time.sleep(2)
-        self.schedule = self.getSchedule()
+        #self.schedule = self.getSchedule()
 
     def getSchedule(self):
-        week1 = getWeek(self.driver)
+        time.sleep(2)
+        week1 = self.getWeek()
 
         nextWeekButton = self.driver.find_element_by_xpath("//div[@class='mUbCce fKz7Od rF3YF EwnKv xEq6pc YTXdJe']")
         nextWeekButton.click()
         time.sleep(1)
 
-        week2 = getWeek(self.driver)
+        week2 = self.getWeek()
 
         self.schedule = week1 + week2
         return self.schedule
@@ -66,6 +57,7 @@ class myCal:
 
         day = self.driver.find_element_by_xpath("//div[@jsname='RjPD4e']")
         day.click()
+        time.sleep(3)#firefox was too slow on rPi
         reminderButton = self.driver.find_elements_by_xpath("//content[@class='kx3Hed']//span[@class='XSQHmd']")[1]
         time.sleep(.1) #avoids double click which just messes everything up
         reminderButton.click()
@@ -82,7 +74,7 @@ class myCal:
         titleBox = self.driver.find_element_by_xpath("//div[@class='aCsJod oJeWuf']//div[@class='aXBtI Wic03c']//div[@class='Xb9hP']//input[@class='whsOnd zHQkBf']")
         titleBox.send_keys(title)
         titleBox.send_keys(Keys.ENTER)
-        return self.reload()
+
 
     def addEvent(self, title, date, startOclock, endOclock):
         day = self.driver.find_element_by_xpath("//div[@jsname='RjPD4e']")
@@ -105,11 +97,20 @@ class myCal:
         timeBox2.send_keys(Keys.ENTER)
         titleBox = self.driver.find_element_by_xpath("//div[@class='aCsJod oJeWuf']//div[@class='aXBtI Wic03c']//div[@class='Xb9hP']//input[@class='whsOnd zHQkBf']")
         titleBox.send_keys(title)
-        titleBox.send_keys(Keys.ENTER)
-        return self.reload()
+
 
     def reload(self):
 
         todayButton = self.driver.find_element_by_xpath("//div[@class='rbGOge SeRypc']//div[@jscontroller='VXdfxd']")
         todayButton.click()
         return self.getSchedule()
+    
+    def getWeek(self):
+        events = [self.driver.find_elements_by_xpath("//div[@jsname='RjPD4e']//h2[@id ='tsc-%s']//..//div[@jscontroller = 'Bo3nHd']" % i) for i in range(7)]
+        dayTitles = [self.driver.find_elements_by_xpath("//h2[@id ='tsc-%s']" % i)[0].text for i in range(7)]
+        currWeek = []
+        for dayOfEvents, dayTitle in zip(events, dayTitles):
+            eventList = [{'time': x.text.split(',')[0], 'name': x.text.split(',')[1]} for x in dayOfEvents]
+            currWeek.append({'title':dayTitle,'events':eventList})
+
+        return currWeek

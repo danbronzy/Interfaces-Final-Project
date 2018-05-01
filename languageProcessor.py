@@ -4,6 +4,8 @@ from datetime import timedelta
 from time import strptime
 
 def evaluate(transcription):
+    
+    command = {'command':'', 'data':[]}
 
     if transcription[:9] == 'remind me':
         #setting a reminder
@@ -44,9 +46,12 @@ def evaluate(transcription):
                 day = str(newTime.day)
                 month = str(newTime.month)
             elif 'on ' in currTime:
-                date = re.findall(r'on ([^at]*)', currTime)[0]
+                if currTime.find('on ') < currTime.find('at'):
+                    date = re.findall(r'on (.*) at', currTime)[0]
+                else:
+                    date = re.findall(r'on (.*)', currTime)[0]
                 monthText = date[:date.find(' ')]
-                month = strptime(monthText,'%B').tm_mon
+                month = str(strptime(monthText,'%B').tm_mon)
                 day = date[date.find(' ')+1:]
             else:
                 day = currDay
@@ -62,13 +67,28 @@ def evaluate(transcription):
             elif (('night' in currTime) | ('tonight' in currTime)):
                 hour = '2100'
             elif 'at ' in currTime:
-                hour = re.findall(r'at ([^on]*)',currTime)[0]
+                if currTime.find('at ') < currTime.find('on'):
+                    hour = re.findall(r'at (.*) on', currTime)[0]
+                else:
+                    hour = re.findall(r'at (.*)', currTime)[0]
+                
 
         action = re.findall(r'(?:to |that )(.*)',transcription)[0]
         if re.findall('[0-9]{4}',hour):
             if int(hour[:2])<12:
                 hour += 'am'
-        parsedDate = 'Date: {1} {0} time: {2} action: {3}'.format(day, month, hour, action)
-        return parsedDate
+        
+        command['command'] = 'reminder'
+        command['data'] = [month, day, hour, action]
+        
+
+    elif transcription[:6] == 'update':
+        command['command'] = 'update'
+    elif transcription[:4] == 'exit' or transcription[:5] == 'close':
+        command['command'] = 'exit'
     else:
-        return transcription
+        command['command'] = 'unknown'
+        command['data'] = transcription
+    
+    return command
+

@@ -49,7 +49,7 @@ class gui:
         self.lastUpdated = datetime.datetime.now()
         self.updated.configure(text = 'Last updated: ' + datetime.datetime.now().strftime("%I:%M:%S"))
         
-    def close(self, event):
+    def close(self, *args):
         self.root1.destroy()
 
     def makeWeather(self):
@@ -119,11 +119,16 @@ class gui:
         for day in schedule:
             date = day['title']
             monthText = re.findall(r', (\w*) \d{1,2}', date)[0]
-            if (strptime(monthText,'%B').tm_mon > int(datetime.datetime.now().month) or
-                int(date[-2:]) >= int(datetime.datetime.now().day)):
-
+            currMonth = int(datetime.datetime.now().month)
+            currDay = int(datetime.datetime.now().day)
+            calMonth = strptime(monthText,'%B').tm_mon
+            calDay = int(date[-2:])
+            
+            if calMonth > currMonth:
                 futureSchedule.append(day)
-
+            elif (calDay >= currDay and calMonth == currMonth):
+                futureSchedule.append(day)
+                
         calInfoFrame = Frame(self.calFrame, style = 'imgCont.TFrame')
         calInfoFrame.grid(row = 0, column = 0, sticky = 'EW')
         numDaysDisplayed = 5
@@ -165,7 +170,14 @@ class gui:
         self.clock.configure(text = datetime.datetime.now().strftime("%I:%M:%S"))
         self.date.configure(text = datetime.datetime.now().strftime("%b %d"))
         self.root1.after(1000, self.updateClock)
-
+    def addReminder(self, data):
+        print(data)
+        date = data[0] + ' ' + data[1]
+        oclock = data[2]
+        title = data[3]
+        self.calendar.addReminder(title, date, oclock)
+        self.makeCalendar()
+        
     def launch(self):
         #show
         self.root1.focus_force()
