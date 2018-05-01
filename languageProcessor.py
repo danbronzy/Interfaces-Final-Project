@@ -86,6 +86,16 @@ def evaluate(transcription):
         command['command'] = 'update'
     elif transcription[:4] == 'exit' or transcription[:5] == 'close':
         command['command'] = 'exit'
+    elif transcription[:7] == 'what is' or transcription[:5] == 'whats' or transcription[:6] == 'what\'s':
+        if 'schedule' in transcription:
+            command['command'] = 'repeat schedule'
+        elif 'weather' in transcription:
+            command['command'] = 'repeat weather'
+            
+        if 'today' in transcription:
+                command['data'] = 'today'
+        elif 'tomorrow' in transcription:
+                command['data'] = 'tomorrow'
     else:
         command['command'] = 'unknown'
         command['data'] = transcription

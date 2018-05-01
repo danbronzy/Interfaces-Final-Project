@@ -9,6 +9,7 @@ import os
 #import playSound
 import languageProcessor
 import subprocess
+import dataSpeaker
 
 class listener(threading.Thread):
 
@@ -47,6 +48,9 @@ class listener(threading.Thread):
             self.gui.addReminder(command['data'])
         elif command['command'] == 'exit':
             self.gui.close()
+        elif command['command'] == 'repeat schedule':
+            dataSpeaker.speakData({'type':'schedule','time':command['data'],'content':self.gui.futureSchedule})
+        
         elif command['command'] == 'unknown':
             self.gui.configText(self.gui.loadingText, 'Command Unknown. You said ' + command['data'])  
         

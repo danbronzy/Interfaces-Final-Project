@@ -115,7 +115,7 @@ class gui:
         self.destroyChildrenOf(self.calFrame)
         schedule = self.calendar.reload()
 
-        futureSchedule = []
+        self.futureSchedule = []
         for day in schedule:
             date = day['title']
             monthText = re.findall(r', (\w*) \d{1,2}', date)[0]
@@ -125,14 +125,14 @@ class gui:
             calDay = int(date[-2:])
             
             if calMonth > currMonth:
-                futureSchedule.append(day)
+                self.futureSchedule.append(day)
             elif (calDay >= currDay and calMonth == currMonth):
-                futureSchedule.append(day)
+                self.futureSchedule.append(day)
                 
         calInfoFrame = Frame(self.calFrame, style = 'imgCont.TFrame')
         calInfoFrame.grid(row = 0, column = 0, sticky = 'EW')
         numDaysDisplayed = 5
-        for day in futureSchedule[:numDaysDisplayed]:
+        for day in self.futureSchedule[:numDaysDisplayed]:
             dayLabel = Label(calInfoFrame, text = '➤ ' + day['title'], style = 'description.TLabel')
             dayLabel.grid(sticky = 'EW')
             for event in day['events']:
