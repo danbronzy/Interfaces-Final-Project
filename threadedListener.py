@@ -6,8 +6,9 @@ import sys
 sys.path.append('/home/pi/snowboycopy/snowboy/examples/Python3/')
 import snowboydecoder
 import os
-import playSound
+#import playSound
 import languageProcessor
+import subprocess
 
 class listener(threading.Thread):
 
@@ -50,11 +51,13 @@ class listener(threading.Thread):
             self.gui.configText(self.gui.loadingText, 'Command Unknown. You said ' + command['data'])  
         
         
-        playSound.threadedSoundPlayer('down.wav')
+        #playSound.threadedSoundPlayer('down.wav')
+        subprocess.Popen(['omxplayer', '-o','local','down.wav'])
         os.remove(fname)
         
     def detected_callback(self):
-        playSound.threadedSoundPlayer('up.wav')
+        #playSound.threadedSoundPlayer('up.wav')
+        subprocess.Popen(['omxplayer', '-o','local','up.wav'])
         self.gui.configText(self.gui.loadingText, 'Listening...')        
 
         
