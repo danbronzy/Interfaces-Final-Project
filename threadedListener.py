@@ -28,6 +28,7 @@ class listener(threading.Thread):
         detector.start(detected_callback = self.detected_callback, audio_recorder_callback = self.audio_recorder_callback)
         
     def audio_recorder_callback(self, fname):
+        playExit = True
         self.gui.configText(self.gui.loadingText, "Thinking...")
         with sr.AudioFile(fname) as src:
             audio = self.r.record(src)
@@ -47,16 +48,17 @@ class listener(threading.Thread):
             self.gui.configText(self.gui.loadingText, 'Adding Reminder | ' + parsedDate)
             self.gui.addReminder(command['data'])
         elif command['command'] == 'exit':
+            os.remove(fname) #kill file before thread daemons or however you say it
             self.gui.close()
         elif command['command'] == 'repeat schedule':
             dataSpeaker.speakData({'type':'schedule','time':command['data'],'content':self.gui.futureSchedule})
-        
+            playExit = False
         elif command['command'] == 'unknown':
             self.gui.configText(self.gui.loadingText, 'Command Unknown. You said ' + command['data'])  
         
         
         #playSound.threadedSoundPlayer('down.wav')
-        subprocess.Popen(['omxplayer', '-o','local','down.wav'])
+        if (playExit): subprocess.Popen(['omxplayer', '-o','local','down.wav'])
         os.remove(fname)
         
     def detected_callback(self):

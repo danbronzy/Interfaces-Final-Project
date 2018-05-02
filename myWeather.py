@@ -6,10 +6,10 @@ def getWeather():
     weatherAPI = '0181f5a522583b067ea4da03d5277fea'
     g = geocoder.ip('me')
     str(g.lat)
-    stuff = {'APPID':weatherAPI,'lat':g.lat, 'lon':g.lng}
+    content = {'APPID':weatherAPI,'lat':g.lat, 'lon':g.lng}
 
     #weather codes: https://openweathermap.org/weather-conditions
-    currWeather = requests.get('http://api.openweathermap.org/data/2.5/weather', params = stuff).json()
+    currWeather = requests.get('http://api.openweathermap.org/data/2.5/weather', params = content).json()
     #https://openweathermap.org/current#parameter
     iconID = currWeather['weather'][0]['icon']
     temp = str(int(1.8*(currWeather['main']['temp']-273) + 32)) #degrees f
@@ -22,10 +22,10 @@ def getWeather():
     weatherData = []
     weatherData.append({'temp':temp,'cloud':cloudCov,'conditions':conditions,'time':time, 'iconID':iconID})
 
-    forecast = requests.get('http://api.openweathermap.org/data/2.5/forecast', params = stuff).json()
+    forecast = requests.get('http://api.openweathermap.org/data/2.5/forecast', params = content).json()
     #https://openweathermap.org/forecast5#JSON
 
-    num3HForecasts = 4
+    num3HForecasts = 12
     for i in range(num3HForecasts):
         time = datetime.datetime.fromtimestamp(forecast['list'][i]['dt']).strftime('%m-%d %I:%M')
         iconID = forecast['list'][i]['weather'][0]['icon']

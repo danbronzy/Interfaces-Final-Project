@@ -57,12 +57,12 @@ class gui:
         self.destroyChildrenOf(self.weatherFrame)
         
         #weather frame
-        weatherData = we.getWeather()
+        self.weatherData = we.getWeather()
 
-        tempNum = Label(self.weatherFrame, text=weatherData[0]['temp'] + '°', style = 'large.TLabel')
+        tempNum = Label(self.weatherFrame, text=self.weatherData[0]['temp'] + '°', style = 'large.TLabel')
         tempNum.grid(row = 0, column = 0, sticky = 'NSE')
 
-        path = "images//" + weatherData[0]['iconID']+".gif"
+        path = "images//" + self.weatherData[0]['iconID']+".gif"
         photo = PhotoImage(file = path)
         # photo = photo.zoom(2,2)
         imgFrame = Frame(self.weatherFrame, style  = 'imgCont.TFrame')
@@ -72,14 +72,14 @@ class gui:
         imgFrame.grid(row = 0, column = 1, sticky = 'NSEW')
         condFrame = Frame(self.weatherFrame, style  = 'imgCont.TFrame')
         condFrame.grid(row = 1, column = 0, columnspan = 2, sticky = 'EW')
-        currConditions = Label(condFrame, text=weatherData[0]['conditions'], style = 'medium.TLabel', justify = 'center')
+        currConditions = Label(condFrame, text=self.weatherData[0]['conditions'], style = 'medium.TLabel', justify = 'center')
         currConditions.pack()
-
-        for i in range(len(weatherData) - 1):
+        numForecasts = 4
+        for i in range(numForecasts):
             forecastFrame = Frame(self.weatherFrame, style  = 'imgCont.TFrame')
             forecastFrame.grid(columnspan = 2, sticky = 'EW')
 
-            forecast = weatherData[i+1]
+            forecast = self.weatherData[i+1]
             time = forecast['time'][-5:]
             temp = forecast['temp'] + '°'
             conds = forecast['conditions']
