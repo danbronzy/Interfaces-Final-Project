@@ -3,41 +3,19 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 import time
 
-def fakeGetWeek(): #for debugging
-    schedule = [{'events': [], 'title': 'No events, Sunday, April 22'},
-                {'events': [{'name': ' Reminder: Get my laundry', 'time': '12:01pm'},
-                {'name': ' Reminder: Get my suit dry-cleaned', 'time': '12:48pm'},
-                {'name': ' work', 'time': '3:30pm to 4:30pm'}],
-                'title': '3 events, Monday, April 23'},
-                {'events': [{'name': ' go home', 'time': '11:30am to 12:30pm'},
-                {'name': ' eat', 'time': '5pm to 6pm'}],
-                'title': '2 events, Tuesday, April 24'},
-                {'events': [{'name': ' Reminder: do someting', 'time': '12pm'},
-                {'name': ' eat again?', 'time': '5:30pm to 6pm'}],
-                'title': '2 events, Wednesday, April 25'},
-                {'events': [], 'title': 'No events, Thursday, April 26'},
-                {'events': [{'name': ' eat again!', 'time': '1:30pm to 2:30pm'}],
-                'title': '1 event, Friday, April 27'},
-                {'events': [], 'title': 'No events, Saturday, April 28'},
-                {'events': [], 'title': 'No events, Sunday, April 29'},
-                {'events': [], 'title': 'No events, Monday, April 30'},
-                {'events': [{'name': ' Reminder: Take my account off Cox', 'time': '8am'}],
-                'title': '1 event, Tuesday, May 1'},
-                {'events': [], 'title': 'No events, Wednesday, May 2'},
-                {'events': [], 'title': 'No events, Thursday, May 3'},
-                {'events': [], 'title': 'No events, Friday, May 4'},
-                {'events': [], 'title': 'No events, Saturday, May 5'}]
-    return schedule
-
 class myCal:
 
     def __init__(self):
-        options = Options()
-        options.add_argument("-headless")
-        fp = webdriver.FirefoxProfile('firefoxProfile')
-        self.driver = webdriver.Firefox(firefox_profile = fp, options = options)
-        self.driver.get("https://calendar.google.com/calendar/r")
-        time.sleep(2)
+        
+        self.DEBUG = True
+        
+        if not self.DEBUG:
+            options = Options()
+            options.add_argument("-headless")
+            fp = webdriver.FirefoxProfile('firefoxProfile')
+            self.driver = webdriver.Firefox(firefox_profile = fp, options = options)
+            self.driver.get("https://calendar.google.com/calendar/r")
+            time.sleep(2)
         #self.schedule = self.getSchedule()
 
     def getSchedule(self):
@@ -54,7 +32,7 @@ class myCal:
         return self.schedule
 
     def addReminder(self, title, date, oclock):
-
+        if self.DEBUG: return
         day = self.driver.find_element_by_xpath("//div[@jsname='RjPD4e']")
         day.click()
         time.sleep(3)#firefox was too slow on rPi
@@ -77,6 +55,7 @@ class myCal:
 
 
     def addEvent(self, title, date, startOclock, endOclock):
+        if self.DEBUG: return
         day = self.driver.find_element_by_xpath("//div[@jsname='RjPD4e']")
         day.click()
         time.sleep(.1)
@@ -100,7 +79,8 @@ class myCal:
 
 
     def reload(self):
-
+        if self.DEBUG: return self.fakeGetWeek()
+        
         todayButton = self.driver.find_element_by_xpath("//div[@class='rbGOge SeRypc']//div[@jscontroller='VXdfxd']")
         todayButton.click()
         return self.getSchedule()
@@ -114,3 +94,31 @@ class myCal:
             currWeek.append({'title':dayTitle,'events':eventList})
 
         return currWeek
+    
+    def fakeGetWeek(self): #for debugging
+        
+        schedule = [{'events': [], 'title': 'No events, Sunday, April 22'},
+                {'events': [{'name': ' Reminder: Get my laundry', 'time': '12:01pm'},
+                {'name': ' Reminder: Get my suit dry-cleaned', 'time': '12:48pm'},
+                {'name': ' work', 'time': '3:30pm to 4:30pm'}],
+                'title': '3 events, Monday, April 23'},
+                {'events': [{'name': ' go home', 'time': '11:30am to 12:30pm'},
+                {'name': ' eat', 'time': '5pm to 6pm'}],
+                'title': '2 events, Tuesday, April 24'},
+                {'events': [{'name': ' Reminder: do someting', 'time': '12pm'},
+                {'name': ' eat again?', 'time': '5:30pm to 6pm'}],
+                'title': '2 events, Wednesday, April 25'},
+                {'events': [], 'title': 'No events, Thursday, April 26'},
+                {'events': [{'name': ' eat again!', 'time': '1:30pm to 2:30pm'}],
+                'title': '1 event, Friday, April 27'},
+                {'events': [], 'title': 'No events, Saturday, April 28'},
+                {'events': [], 'title': 'No events, Sunday, April 29'},
+                {'events': [], 'title': 'No events, Monday, April 30'},
+                {'events': [{'name': ' Reminder: Take my account off Cox', 'time': '8am'}],
+                'title': '1 event, Tuesday, May 1'},
+                {'events': [], 'title': 'No events, Wednesday, May 2'},
+                {'events': [], 'title': 'No events, Thursday, May 3'},
+                {'events': [], 'title': 'No events, Friday, May 4'},
+                {'events': [], 'title': 'No events, Saturday, May 5'}]
+        return schedule
+    
