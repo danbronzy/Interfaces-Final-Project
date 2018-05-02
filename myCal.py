@@ -7,7 +7,7 @@ class myCal:
 
     def __init__(self):
         
-        self.DEBUG = True
+        self.DEBUG = False
         
         if not self.DEBUG:
             options = Options()
