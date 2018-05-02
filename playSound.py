@@ -1,3 +1,4 @@
+'''
 import pyaudio  
 import wave  
 import threading
@@ -33,4 +34,4 @@ class threadedSoundPlayer(threading.Thread):
         stream.close()  
 
         p.terminate()
-        
+'''
