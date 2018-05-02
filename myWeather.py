@@ -17,7 +17,7 @@ def getWeather():
     mainWeather = currWeather['weather'][0]['main']
     weatherDescript = currWeather['weather'][0]['description']
     conditions = '%(main)s: %(descript)s' % {'main': mainWeather, 'descript': weatherDescript}
-    time = datetime.datetime.fromtimestamp(currWeather['dt']).strftime('%m-%d %I:%M')
+    time = datetime.datetime.fromtimestamp(currWeather['dt'])
 
     weatherData = []
     weatherData.append({'temp':temp,'cloud':cloudCov,'conditions':conditions,'time':time, 'iconID':iconID})
@@ -27,7 +27,7 @@ def getWeather():
 
     num3HForecasts = 12
     for i in range(num3HForecasts):
-        time = datetime.datetime.fromtimestamp(forecast['list'][i]['dt']).strftime('%m-%d %I:%M')
+        time = datetime.datetime.fromtimestamp(forecast['list'][i]['dt'])
         iconID = forecast['list'][i]['weather'][0]['icon']
         cloudCov = str(forecast['list'][i]['clouds']['all'])
         temp = str(int(1.8*(forecast['list'][i]['main']['temp']-273)+32))

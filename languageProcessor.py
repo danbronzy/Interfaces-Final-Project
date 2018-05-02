@@ -86,7 +86,7 @@ def evaluate(transcription):
         command['command'] = 'update'
     elif transcription[:4] == 'exit' or transcription[:5] == 'close':
         command['command'] = 'exit'
-    elif transcription[:7] == 'what is' or transcription[:5] == 'whats' or transcription[:6] == 'what\'s':
+    elif transcription[:7] == 'what is' or transcription[:5] == 'whats' or transcription[:6] == 'what\'s' or transcription[:9] == 'what will':
         if 'schedule' in transcription:
             command['command'] = 'repeat schedule'
         elif 'weather' in transcription:

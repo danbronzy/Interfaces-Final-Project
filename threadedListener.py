@@ -40,6 +40,8 @@ class listener(threading.Thread):
         except sr.RequestError:
             self.gui.configText(self.gui.loadingText, "Google sucks and messed up")
         command = languageProcessor.evaluate(transcription)
+        
+        
         if (command['command'] == 'update'):
             self.gui.configText(self.gui.loadingText, 'Updating All')  
             self.gui.updateAll()
@@ -53,10 +55,13 @@ class listener(threading.Thread):
         elif command['command'] == 'repeat schedule':
             dataSpeaker.speakData({'type':'schedule','time':command['data'],'content':self.gui.futureSchedule})
             playExit = False
+        elif command['command'] == 'repeat weather':
+            dataSpeaker.speakData({'type':'weather','time':command['data'],'content':self.gui.weatherData})
+            playExit = False
         elif command['command'] == 'unknown':
-            self.gui.configText(self.gui.loadingText, 'Command Unknown. You said ' + command['data'])  
+            self.gui.configText(self.gui.loadingText, 'Command Unknown | You said: ' + command['data'])  
         
-        
+        self.gui.configText(self.gui.loadingText, 'Say \'Smart Mirror\' to get started')
         #playSound.threadedSoundPlayer('down.wav')
         if (playExit): subprocess.Popen(['omxplayer', '-o','local','down.wav'])
         os.remove(fname)

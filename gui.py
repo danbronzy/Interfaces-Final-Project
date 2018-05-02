@@ -11,8 +11,9 @@ import re
 class gui:
 
     def __init__(self, calendar):
+             
         self.calendar = calendar
-
+        
         #make root
         self.root1 = Tk()
         self.root1.title('Smart Mirror')
@@ -80,7 +81,7 @@ class gui:
             forecastFrame.grid(columnspan = 2, sticky = 'EW')
 
             forecast = self.weatherData[i+1]
-            time = forecast['time'][-5:]
+            time = forecast['time'].strftime('%m-%d %I:%M')[-5:]
             temp = forecast['temp'] + '°'
             conds = forecast['conditions']
             path = "images//" + forecast['iconID'] + ".gif"
